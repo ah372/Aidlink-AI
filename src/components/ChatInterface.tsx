@@ -105,8 +105,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         config.gradient
       )}>
         <div className="absolute top-4 right-4">
-          <div className="w-3 h-3 bg-red-500 rounded-full animate-ping shadow-lg"></div>
-          <div className="absolute top-0 left-0 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+          <div className="relative">
+            {/* Emergency beacon bulb shape */}
+            <div className="w-4 h-6 bg-red-500 rounded-t-full rounded-b-sm animate-ping shadow-lg"></div>
+            <div className="absolute top-0 left-0 w-4 h-6 bg-red-600 rounded-t-full rounded-b-sm animate-pulse"></div>
+            {/* Base of the beacon */}
+            <div className="w-5 h-1 bg-gray-600 rounded-sm -mt-0.5 -ml-0.5"></div>
+          </div>
         </div>
         <h1 className="text-2xl font-bold text-white flex items-center gap-3">
           <Bot className="w-8 h-8" />
