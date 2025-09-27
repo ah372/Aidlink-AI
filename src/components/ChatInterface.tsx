@@ -73,10 +73,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+    // Refocus input after messages update (when not loading)
+    if (!isLoading && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [messages, isLoading]);
 
   useEffect(() => {
-    // Focus input on mount and keep cursor blinking
+    // Focus input on mount
     if (inputRef.current) {
       inputRef.current.focus();
     }
