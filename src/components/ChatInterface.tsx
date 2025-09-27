@@ -253,14 +253,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                               onClick={() => handleAudioPlay(messageId, message.audioUrl!)}
                               variant="outline"
                               size="sm"
-                              className="flex items-center gap-2 hover:bg-blue-50 hover:border-blue-300 transition-colors"
+                              className="flex items-center gap-2 bg-white border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 shadow-sm transition-all duration-200"
                             >
                               {isPlaying ? (
                                 <Pause className="w-4 h-4 text-blue-600" />
                               ) : (
                                 <Play className="w-4 h-4 text-blue-600" />
                               )}
-                              <span className="text-sm font-medium">
+                              <span className="text-sm font-medium text-blue-700">
                                 {isPlaying ? 'Pause' : 'Listen'}
                               </span>
                             </Button>

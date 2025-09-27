@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Mic, MicOff, Play, Pause, Trash2 } from 'lucide-react';
+import { Mic, MicOff, Play, Pause, Trash2, Send, Loader2 } from 'lucide-react';
 import { useVoiceRecording } from '@/hooks/useVoiceRecording';
 import { cn } from '@/lib/utils';
 
@@ -123,85 +123,130 @@ export const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   }
 
   return (
-    <div className={cn("flex flex-col items-center space-y-3", className)}>
+    <div className={cn("w-full", className)}>
       {error && (
-        <div className="text-red-500 text-sm text-center p-2 bg-red-50 rounded">
-          {error}
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+          <div className="text-red-700 text-sm font-medium">
+            Recording Error: {error}
+          </div>
         </div>
       )}
 
-      <div className="flex items-center space-x-2">
-        {!audioBlob ? (
-          <Button
-            onClick={isRecording ? handleStopRecording : handleStartRecording}
-            disabled={disabled || isTranscribing}
-            variant={isRecording ? "destructive" : "outline"}
-            size="lg"
-            className={cn(
-              "rounded-full w-12 h-12 p-0",
-              isRecording && "animate-pulse"
-            )}
-          >
-            {isRecording ? (
-              <MicOff className="w-6 h-6" />
-            ) : (
-              <Mic className="w-6 h-6" />
-            )}
-          </Button>
-        ) : (
-          <div className="flex items-center space-x-2">
+      <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200 shadow-sm">
+        {/* Status Header */}
+        <div className="text-center mb-6">
+          {isRecording && (
+            <div className="flex items-center justify-center gap-3 text-red-600 mb-2">
+              <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+              <span className="text-sm font-semibold">Recording in progress...</span>
+            </div>
+          )}
+          {audioBlob && !isRecording && (
+            <div className="flex items-center justify-center gap-3 text-green-600 mb-2">
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+              <span className="text-sm font-semibold">Recording complete</span>
+            </div>
+          )}
+          {!isRecording && !audioBlob && (
+            <div className="text-gray-600 text-sm">
+              Tap the microphone to start recording your message
+            </div>
+          )}
+        </div>
+
+        {/* Main Controls */}
+        <div className="flex items-center justify-center gap-4">
+          {!audioBlob ? (
             <Button
-              onClick={handlePlayRecording}
+              onClick={isRecording ? handleStopRecording : handleStartRecording}
               disabled={disabled || isTranscribing}
-              variant="outline"
-              size="sm"
-              className="rounded-full w-10 h-10 p-0"
+              size="lg"
+              className={cn(
+                "flex items-center gap-3 px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200",
+                isRecording 
+                  ? "bg-red-600 hover:bg-red-700 text-white animate-pulse" 
+                  : "bg-blue-600 hover:bg-blue-700 text-white"
+              )}
             >
-              {isPlaying ? (
-                <Pause className="w-4 h-4" />
+              {isRecording ? (
+                <>
+                  <MicOff className="w-6 h-6" />
+                  <span className="font-semibold">Stop Recording</span>
+                </>
               ) : (
-                <Play className="w-4 h-4" />
+                <>
+                  <Mic className="w-6 h-6" />
+                  <span className="font-semibold">Start Recording</span>
+                </>
               )}
             </Button>
-            <Button
-              onClick={handleSendRecording}
-              disabled={disabled || isTranscribing}
-              variant="default"
-              size="sm"
-              className="px-4"
-            >
-              {isTranscribing ? "Transcribing..." : "Send Voice"}
-            </Button>
-            <Button
-              onClick={clearRecording}
-              disabled={disabled || isTranscribing}
-              variant="outline"
-              size="sm"
-              className="rounded-full w-10 h-10 p-0"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={handlePlayRecording}
+                disabled={disabled || isTranscribing}
+                variant="outline"
+                size="lg"
+                className="flex items-center gap-2 px-6 py-3 border-2 border-gray-300 hover:border-blue-400 hover:bg-blue-50 rounded-full transition-all duration-200"
+              >
+                {isPlaying ? (
+                  <Pause className="w-5 h-5 text-blue-600" />
+                ) : (
+                  <Play className="w-5 h-5 text-blue-600" />
+                )}
+                <span className="font-medium text-gray-700">
+                  {isPlaying ? 'Pause' : 'Play'}
+                </span>
+              </Button>
+
+              <Button
+                onClick={handleSendRecording}
+                disabled={disabled || isTranscribing}
+                size="lg"
+                className="flex items-center gap-2 px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
+              >
+                {isTranscribing ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Send className="w-5 h-5" />
+                )}
+                <span className="font-semibold">
+                  {isTranscribing ? 'Sending...' : 'Send Voice'}
+                </span>
+              </Button>
+
+              <Button
+                onClick={clearRecording}
+                disabled={disabled || isTranscribing}
+                variant="outline"
+                size="lg"
+                className="flex items-center gap-2 px-4 py-3 border-2 border-gray-300 hover:border-red-400 hover:bg-red-50 rounded-full transition-all duration-200"
+              >
+                <Trash2 className="w-5 h-5 text-red-600" />
+                <span className="font-medium text-gray-700">Clear</span>
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {/* Status Messages */}
+        {audioBlob && !isTranscribing && (
+          <div className="mt-4 text-center">
+            <div className="text-sm text-green-600 font-medium">
+              ✓ Recording ready! Click "Send Voice" to send your message.
+            </div>
+          </div>
+        )}
+
+        {isTranscribing && (
+          <div className="mt-4 text-center">
+            <div className="flex items-center justify-center gap-2 text-blue-600">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span className="text-sm font-medium">Processing your voice message...</span>
+            </div>
           </div>
         )}
       </div>
-
-      {isRecording && (
-        <div className="text-sm text-muted-foreground">
-          Recording... Click to stop
-        </div>
-      )}
-
-      {audioBlob && !isTranscribing && (
-        <div className="text-sm text-green-600">
-          Recording ready! Click "Send Voice" to transcribe and send.
-        </div>
-      )}
-
-      {isTranscribing && (
-        <div className="text-sm text-blue-600">
-          Transcribing your voice...
-        </div>
-      )}
 
       {/* Hidden audio element for playback */}
       {audioUrl && (

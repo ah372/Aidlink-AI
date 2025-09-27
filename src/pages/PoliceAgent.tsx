@@ -107,13 +107,8 @@ const PoliceAgent = () => {
     try {
       const response = await policeVoiceChat(userId, audioBlob);
       
-      // Update the user message with the transcribed text
-      const transcribedText = response.response || '[Voice message processed]';
-      setMessages(prev => prev.map((msg, index) => 
-        index === prev.length - 1 && msg.role === 'user' 
-          ? { ...msg, content: transcribedText }
-          : msg
-      ));
+      // Keep the user message as voice placeholder
+      // The transcribed text will be shown in the assistant's response
       
       // Add assistant response
       const assistantMessage: Message = {
