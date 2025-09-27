@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ChatInterface } from '@/components/ChatInterface';
 import { policeChat, getPoliceChatHistory, generateUserId } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft, Home } from 'lucide-react';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -14,6 +16,7 @@ const PoliceAgent = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { toast } = useToast();
   
   // Get user ID from navigation state or generate new one
@@ -35,15 +38,13 @@ const PoliceAgent = () => {
         setMessages(formattedMessages);
       } catch (error) {
         console.error('Failed to load police chat history:', error);
-        // Show welcome message if no history
-        if (location.state?.fromTriage) {
-          const welcomeMessage: Message = {
-            role: 'assistant',
-            content: "Hello! I'm the Police Emergency Agent. I've been notified about your situation that requires law enforcement assistance. Please provide detailed information about the incident so I can help coordinate the appropriate response.",
-            timestamp: new Date(),
-          };
-          setMessages([welcomeMessage]);
-        }
+        // Show default welcome message
+        const welcomeMessage: Message = {
+          role: 'assistant',
+          content: "My Assistant has sent you to me. Plz tell me what I can help you with?",
+          timestamp: new Date(),
+        };
+        setMessages([welcomeMessage]);
       }
     };
 
@@ -90,15 +91,40 @@ const PoliceAgent = () => {
   };
 
   return (
-    <div className="h-screen">
-      <ChatInterface
-        messages={messages}
-        onSendMessage={handleSendMessage}
-        isLoading={isLoading}
-        theme="police"
-        placeholder="Describe the situation requiring police assistance..."
-        agentName="👮 Police Emergency Agent"
-      />
+    <div className="h-screen flex flex-col">
+      {/* Navigation Bar */}
+      <div className="flex justify-between items-center p-4 bg-police-bg border-b">
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => navigate('/frontdesk')}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Front Desk
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => navigate('/')}
+            className="flex items-center gap-2"
+          >
+            <Home className="w-4 h-4" />
+            Home
+          </Button>
+        </div>
+      </div>
+      
+      {/* Chat Interface */}
+      <div className="flex-1">
+        <ChatInterface
+          messages={messages}
+          onSendMessage={handleSendMessage}
+          isLoading={isLoading}
+          theme="police"
+          placeholder="Describe the situation requiring police assistance..."
+          agentName="👮 Police Emergency Agent"
+        />
+      </div>
     </div>
   );
 };
