@@ -101,9 +101,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     )}>
       {/* Header */}
       <div className={cn(
-        "p-4 border-b shadow-lg",
+        "p-4 border-b shadow-lg relative",
         config.gradient
       )}>
+        <div className="absolute top-4 right-4">
+          <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse shadow-lg"></div>
+        </div>
         <h1 className="text-2xl font-bold text-white flex items-center gap-3">
           <Bot className="w-8 h-8" />
           {agentName}
@@ -192,14 +195,11 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               onChange={(e) => setInputValue(e.target.value)}
               placeholder={placeholder}
               disabled={isLoading}
-              className="pr-12 h-12 text-base focus:ring-2 focus:ring-primary/50 animate-blink"
+              className="h-12 text-base focus:ring-2 focus:ring-primary/50"
               style={{
                 caretColor: 'hsl(var(--primary))',
               }}
             />
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-              <div className="w-0.5 h-5 bg-primary animate-blink"></div>
-            </div>
           </div>
           <Button
             type="submit"
