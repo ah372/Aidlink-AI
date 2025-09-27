@@ -34,14 +34,6 @@
         "dest": "/index.html"
       }
     ],
-    "env": {
-      "VITE_API_BASE_URL": "https://your-backend-api.vercel.app"
-    },
-    "functions": {
-      "src/pages/api/**/*.ts": {
-        "runtime": "nodejs18.x"
-      }
-    },
     "headers": [
       {
         "source": "/(.*)",
