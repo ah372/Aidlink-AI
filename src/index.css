@@ -36,6 +36,12 @@
     --electricity-bg: 54 100% 97%;
     --electricity-foreground: 220 13% 18%;
 
+    /* Fire Theme */
+    --fire-primary: 14 100% 57%;   /* Orange #FF5722 */
+    --fire-secondary: 1 83% 63%;   /* Red-Orange #F44336 */
+    --fire-bg: 14 100% 97%;
+    --fire-foreground: 0 0% 98%;
+
     /* Components */
     --card: 0 0% 100%;
     --card-foreground: 220 13% 18%;
@@ -58,6 +64,7 @@
     --gradient-medical: linear-gradient(135deg, hsl(var(--medical-primary)), hsl(var(--medical-secondary)));
     --gradient-police: linear-gradient(135deg, hsl(var(--police-primary)), hsl(var(--police-secondary)));
     --gradient-electricity: linear-gradient(135deg, hsl(var(--electricity-primary)), hsl(var(--electricity-secondary)));
+    --gradient-fire: linear-gradient(135deg, hsl(var(--fire-primary)), hsl(var(--fire-secondary)));
     --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--emergency)) 100%);
 
     /* Emergency Shadows */
@@ -65,6 +72,7 @@
     --shadow-medical: 0 10px 30px -10px hsl(var(--medical-primary) / 0.3);
     --shadow-police: 0 10px 30px -10px hsl(var(--police-primary) / 0.3);
     --shadow-electricity: 0 10px 30px -10px hsl(var(--electricity-primary) / 0.3);
+    --shadow-fire: 0 10px 30px -10px hsl(var(--fire-primary) / 0.3);
 
     /* Animations */
     --transition-emergency: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

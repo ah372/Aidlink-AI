@@ -7,7 +7,7 @@ export interface ChatMessage {
 
 export interface ChatResponse {
   response: string;
-  emergency_type?: 'Medical' | 'Police' | 'Electricity';
+  emergency_type?: 'Medical' | 'Police' | 'Electricity' | 'Fire';
 }
 
 export interface ChatHistoryResponse {
@@ -142,6 +142,38 @@ export const getElectricityChatHistory = async (userId: string): Promise<ChatHis
 
   if (!response.ok) {
     throw new Error('Failed to fetch electricity chat history');
+  }
+
+  return response.json();
+};
+
+// Fire Agent API
+export const fireChat = async (userId: string, message: string): Promise<ChatResponse> => {
+  const response = await fetch(`${BASE_URL}/api/fire-emergency/chat`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      user_id: userId,
+      message: message,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to send message to fire agent');
+  }
+
+  return response.json();
+};
+
+export const getFireChatHistory = async (userId: string): Promise<ChatHistoryResponse> => {
+  const response = await fetch(`${BASE_URL}/api/fire-emergency/chatHistory/${userId}`, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch fire chat history');
   }
 
   return response.json();

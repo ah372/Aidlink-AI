@@ -79,6 +79,9 @@ const FrontDesk = () => {
             case 'Electricity':
               navigate('/electricity', { state: { fromTriage: true, userId } });
               break;
+            case 'Fire':
+              navigate('/fire', { state: { fromTriage: true, userId } });
+              break;
             default:
               console.warn('Unknown emergency type:', response.emergency_type);
           }

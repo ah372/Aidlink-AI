@@ -14,7 +14,7 @@ interface ChatInterfaceProps {
   messages: Message[];
   onSendMessage: (message: string) => void;
   isLoading: boolean;
-  theme: 'medical' | 'police' | 'electricity' | 'triage';
+  theme: 'medical' | 'police' | 'electricity' | 'fire' | 'triage';
   placeholder?: string;
   agentName?: string;
 }
@@ -43,6 +43,14 @@ const themeConfig = {
     userBubble: 'bg-electricity-primary text-electricity-secondary',
     botBubble: 'bg-electricity-secondary text-electricity-primary',
     gradient: 'bg-gradient-electricity',
+  },
+  fire: {
+    primary: 'fire',
+    secondary: 'fire-secondary',
+    bgClass: 'bg-fire-bg',
+    userBubble: 'bg-fire-primary text-fire-foreground',
+    botBubble: 'bg-fire-secondary text-fire-primary',
+    gradient: 'bg-gradient-fire',
   },
   triage: {
     primary: 'emergency',
