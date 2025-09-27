@@ -11,7 +11,8 @@ import {
   Clock, 
   Users,
   ArrowRight,
-  CheckCircle
+  CheckCircle,
+  Bot
 } from 'lucide-react';
 import heroImage from '@/assets/hero-emergency.jpg';
 import medicalImage from '@/assets/medical-hero.jpg';
@@ -92,9 +93,9 @@ const Landing = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-emergency rounded-lg flex items-center justify-center">
-                <Phone className="w-6 h-6 text-white" />
+                <Bot className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-foreground">EmergencyLink</span>
+              <span className="text-xl font-bold text-foreground">AidLinkAI</span>
             </div>
             <Button
               onClick={() => navigate('/frontdesk')}
@@ -156,7 +157,7 @@ const Landing = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">
-              Why Choose EmergencyLink?
+              Why Choose AidLinkAI?
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Our advanced AI system ensures you get the right help, from the right responder, at the right time.
@@ -283,9 +284,9 @@ const Landing = () => {
           <div className="text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
               <div className="w-8 h-8 bg-emergency rounded-lg flex items-center justify-center">
-                <Phone className="w-5 h-5 text-white" />
+                <Bot className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold">EmergencyLink</span>
+              <span className="text-xl font-bold">AidLinkAI</span>
             </div>
             <p className="text-primary-foreground/80 mb-4">
               Fast, Clear, Reliable Emergency Help – Connecting Citizens with Frontline Responders.
