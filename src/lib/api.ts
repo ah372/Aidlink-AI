@@ -1,4 +1,4 @@
-const BASE_URL = 'https://zainattiq-aidlinkai.hf.space';
+const BASE_URL = 'http://127.0.0.1:8000';
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
@@ -8,6 +8,7 @@ export interface ChatMessage {
 export interface ChatResponse {
   response: string;
   emergency_type?: 'Medical' | 'Police' | 'Electricity' | 'Fire';
+  audio_response_path?: string;
 }
 
 export interface ChatHistoryResponse {
@@ -177,4 +178,114 @@ export const getFireChatHistory = async (userId: string): Promise<ChatHistoryRes
   }
 
   return response.json();
+};
+
+// Voice message functions
+export const triageVoiceChat = async (userId: string, audioBlob: Blob): Promise<ChatResponse> => {
+  const formData = new FormData();
+  formData.append('user_id', userId);
+  formData.append('message', '');
+  formData.append('input_type', 'voice');
+  formData.append('audio', audioBlob, 'voice.wav');
+
+  const response = await fetch(`${BASE_URL}/api/triage/chat`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to send voice message to triage agent');
+  }
+
+  return response.json();
+};
+
+export const medicalVoiceChat = async (userId: string, audioBlob: Blob): Promise<ChatResponse> => {
+  const formData = new FormData();
+  formData.append('user_id', userId);
+  formData.append('message', '');
+  formData.append('input_type', 'voice');
+  formData.append('audio', audioBlob, 'voice.wav');
+
+  const response = await fetch(`${BASE_URL}/api/medical-emergency/chat`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to send voice message to medical agent');
+  }
+
+  return response.json();
+};
+
+export const policeVoiceChat = async (userId: string, audioBlob: Blob): Promise<ChatResponse> => {
+  const formData = new FormData();
+  formData.append('user_id', userId);
+  formData.append('message', '');
+  formData.append('input_type', 'voice');
+  formData.append('audio', audioBlob, 'voice.wav');
+
+  const response = await fetch(`${BASE_URL}/api/police-emergency/chat`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to send voice message to police agent');
+  }
+
+  return response.json();
+};
+
+export const electricityVoiceChat = async (userId: string, audioBlob: Blob): Promise<ChatResponse> => {
+  const formData = new FormData();
+  formData.append('user_id', userId);
+  formData.append('message', '');
+  formData.append('input_type', 'voice');
+  formData.append('audio', audioBlob, 'voice.wav');
+
+  const response = await fetch(`${BASE_URL}/api/electricity-emergency/chat`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to send voice message to electricity agent');
+  }
+
+  return response.json();
+};
+
+export const fireVoiceChat = async (userId: string, audioBlob: Blob): Promise<ChatResponse> => {
+  const formData = new FormData();
+  formData.append('user_id', userId);
+  formData.append('message', '');
+  formData.append('input_type', 'voice');
+  formData.append('audio', audioBlob, 'voice.wav');
+
+  const response = await fetch(`${BASE_URL}/api/fire-emergency/chat`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to send voice message to fire agent');
+  }
+
+  return response.json();
+};
+
+// Audio response functions
+export const getAudioUrl = (audioPath: string): string => {
+  // If the path already starts with /audio/, use it as is
+  if (audioPath.startsWith('/audio/')) {
+    const url = `${BASE_URL}${audioPath}`;
+    console.log('Generated audio URL (with /audio/):', url);
+    return url;
+  }
+  // Otherwise, assume it's just the filename and add the /audio/ prefix
+  const url = `${BASE_URL}/audio/${audioPath}`;
+  console.log('Generated audio URL (filename only):', url);
+  return url;
 };

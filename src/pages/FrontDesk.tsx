@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChatInterface } from '@/components/ChatInterface';
-import { triageChat, getTriageChatHistory, generateUserId } from '@/lib/api';
+import { triageChat, triageVoiceChat, getTriageChatHistory, generateUserId, getAudioUrl } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
@@ -10,6 +10,7 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  audioUrl?: string;
 }
 
 const FrontDesk = () => {
@@ -28,6 +29,7 @@ const FrontDesk = () => {
           role: msg.role,
           content: msg.content,
           timestamp: new Date(),
+          audioUrl: msg.audio_response_path ? getAudioUrl(msg.audio_response_path) : undefined,
         }));
         setMessages(formattedMessages);
       } catch (error) {
@@ -57,6 +59,7 @@ const FrontDesk = () => {
         role: 'assistant',
         content: response.response,
         timestamp: new Date(),
+        audioUrl: response.audio_response_path ? getAudioUrl(response.audio_response_path) : undefined,
       };
       setMessages(prev => [...prev, assistantMessage]);
 
@@ -106,6 +109,89 @@ const FrontDesk = () => {
     }
   };
 
+  const handleVoiceMessage = async (audioBlob: Blob) => {
+    // Add user message immediately
+    const userMessage: Message = {
+      role: 'user',
+      content: '[Voice message...]',
+      timestamp: new Date(),
+    };
+    setMessages(prev => [...prev, userMessage]);
+    setIsLoading(true);
+
+    try {
+      const response = await triageVoiceChat(userId, audioBlob);
+      
+      // Update the user message with the transcribed text
+      const transcribedText = response.response || '[Voice message processed]';
+      setMessages(prev => prev.map((msg, index) => 
+        index === prev.length - 1 && msg.role === 'user' 
+          ? { ...msg, content: transcribedText }
+          : msg
+      ));
+      
+      // Add assistant response
+      const assistantMessage: Message = {
+        role: 'assistant',
+        content: response.response || 'I received your voice message but could not process it properly.',
+        timestamp: new Date(),
+        audioUrl: response.audio_response_path ? getAudioUrl(response.audio_response_path) : undefined,
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+
+      // Check if emergency type is determined
+      if (response.emergency_type) {
+        toast({
+          title: "Emergency Classified",
+          description: `Routing you to ${response.emergency_type} Emergency Agent...`,
+        });
+
+        // Navigate to appropriate agent page after a short delay
+        setTimeout(() => {
+          switch (response.emergency_type) {
+            case 'Medical':
+              navigate('/medical', { state: { fromTriage: true, userId } });
+              break;
+            case 'Police':
+              navigate('/police', { state: { fromTriage: true, userId } });
+              break;
+            case 'Electricity':
+              navigate('/electricity', { state: { fromTriage: true, userId } });
+              break;
+            case 'Fire':
+              navigate('/fire', { state: { fromTriage: true, userId } });
+              break;
+            default:
+              console.warn('Unknown emergency type:', response.emergency_type);
+          }
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Failed to send voice message:', error);
+      toast({
+        title: "Voice Processing Error",
+        description: "Failed to process voice message. Please try again.",
+        variant: "destructive",
+      });
+      
+      // Update the user message to show error
+      setMessages(prev => prev.map((msg, index) => 
+        index === prev.length - 1 && msg.role === 'user' 
+          ? { ...msg, content: '[Voice message failed to process]' }
+          : msg
+      ));
+      
+      const errorMessage: Message = {
+        role: 'assistant',
+        content: "I'm sorry, I'm having trouble processing your voice message right now. Please try again or use text input.",
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col">
       {/* Navigation Bar */}
@@ -127,6 +213,7 @@ const FrontDesk = () => {
         <ChatInterface
           messages={messages}
           onSendMessage={handleSendMessage}
+          onVoiceMessage={handleVoiceMessage}
           isLoading={isLoading}
           theme="triage"
           placeholder="Describe your emergency situation..."
