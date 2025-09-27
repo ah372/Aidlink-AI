@@ -5,6 +5,7 @@ import { electricityChat, getElectricityChatHistory, generateUserId } from '@/li
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Home } from 'lucide-react';
+import electricityHeroImage from '@/assets/electricity-hero.jpg';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -93,8 +94,12 @@ const ElectricityAgent = () => {
   return (
     <div className="h-screen flex flex-col">
       {/* Navigation Bar */}
-      <div className="flex justify-between items-center p-4 bg-electricity-bg border-b">
-        <div className="flex gap-2">
+      <div 
+        className="flex justify-between items-center p-4 bg-electricity-bg border-b relative bg-cover bg-center"
+        style={{ backgroundImage: `url(${electricityHeroImage})` }}
+      >
+        <div className="absolute inset-0 bg-electricity-primary/80"></div>
+        <div className="flex gap-2 relative z-10">
           <Button
             variant="outline"
             onClick={() => navigate('/frontdesk')}
