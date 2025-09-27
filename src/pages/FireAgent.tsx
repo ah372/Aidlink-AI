@@ -93,7 +93,7 @@ const FireAgent = () => {
   return (
     <div className="h-screen flex flex-col">
       {/* Navigation Bar */}
-      <div className="flex justify-between items-center p-4 bg-fire-bg border-b">
+      <div className="flex justify-between items-center p-4 bg-gradient-fire border-b border-fire-border">
         <div className="flex gap-2">
           <Button
             variant="outline"

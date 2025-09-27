@@ -6,6 +6,7 @@ import {
   Shield, 
   Heart, 
   Zap, 
+  Flame,
   Phone, 
   Clock, 
   Users,
@@ -16,6 +17,7 @@ import heroImage from '@/assets/hero-emergency.jpg';
 import medicalImage from '@/assets/medical-hero.jpg';
 import policeImage from '@/assets/police-hero.jpg';
 import electricityImage from '@/assets/electricity-hero.jpg';
+import fireImage from '@/assets/fire-hero.jpg';
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -29,7 +31,7 @@ const Landing = () => {
     {
       icon: Users,
       title: 'Expert Agents',
-      description: 'Specialized AI agents trained to handle medical, police, and utility emergencies.',
+      description: 'Specialized AI agents trained to handle medical, police, fire, and utility emergencies.',
     },
     {
       icon: Shield,
@@ -62,6 +64,14 @@ const Landing = () => {
       image: electricityImage,
       gradient: 'bg-gradient-electricity',
       color: 'text-electricity-primary',
+    },
+    {
+      icon: Flame,
+      title: 'Fire Emergency',
+      description: 'Immediate response for fire emergencies, building evacuations, and fire safety.',
+      image: fireImage,
+      gradient: 'bg-gradient-fire',
+      color: 'text-fire-primary',
     },
   ];
 
@@ -179,7 +189,7 @@ const Landing = () => {
               Our AI agents are specifically trained to handle different types of emergencies with precision and care.
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {agents.map((agent, index) => (
               <Card key={index} className="overflow-hidden hover:shadow-xl transition-all duration-300 animate-slide-up" style={{ animationDelay: `${index * 0.1}s` }}>
                 <div className={`h-48 ${agent.gradient} relative overflow-hidden`}>
