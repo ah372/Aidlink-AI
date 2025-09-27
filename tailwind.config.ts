@@ -53,6 +53,13 @@ export default {
           bg: "hsl(var(--electricity-bg))",
           foreground: "hsl(var(--electricity-foreground))",
         },
+        fire: {
+          primary: "hsl(var(--fire-primary))",
+          secondary: "hsl(var(--fire-secondary))",
+          bg: "hsl(var(--fire-bg))",
+          foreground: "hsl(var(--fire-foreground))",
+          border: "hsl(var(--fire-primary) / 0.2)",
+        },
         
         /* Base Components */
         secondary: {
@@ -134,6 +141,7 @@ export default {
         'gradient-medical': 'var(--gradient-medical)',
         'gradient-police': 'var(--gradient-police)',
         'gradient-electricity': 'var(--gradient-electricity)',
+        'gradient-fire': 'var(--gradient-fire)',
         'gradient-hero': 'var(--gradient-hero)',
       },
       boxShadow: {
@@ -141,6 +149,7 @@ export default {
         'medical': 'var(--shadow-medical)',
         'police': 'var(--shadow-police)',
         'electricity': 'var(--shadow-electricity)',
+        'fire': 'var(--shadow-fire)',
       },
     },
   },
