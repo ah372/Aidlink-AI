@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { ChatInterface } from '@/components/ChatInterface';
 import { triageChat, getTriageChatHistory, generateUserId } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { Home } from 'lucide-react';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -102,15 +104,32 @@ const FrontDesk = () => {
   };
 
   return (
-    <div className="h-screen">
-      <ChatInterface
-        messages={messages}
-        onSendMessage={handleSendMessage}
-        isLoading={isLoading}
-        theme="triage"
-        placeholder="Describe your emergency situation..."
-        agentName="FrontDesk Agent"
-      />
+    <div className="h-screen flex flex-col">
+      {/* Navigation Bar */}
+      <div className="flex justify-between items-center p-4 bg-background border-b">
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => navigate('/')}
+            className="flex items-center gap-2"
+          >
+            <Home className="w-4 h-4" />
+            Home
+          </Button>
+        </div>
+      </div>
+      
+      {/* Chat Interface */}
+      <div className="flex-1">
+        <ChatInterface
+          messages={messages}
+          onSendMessage={handleSendMessage}
+          isLoading={isLoading}
+          theme="triage"
+          placeholder="Describe your emergency situation..."
+          agentName="FrontDesk Agent"
+        />
+      </div>
     </div>
   );
 };
