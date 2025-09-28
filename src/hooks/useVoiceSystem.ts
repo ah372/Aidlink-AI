@@ -32,9 +32,10 @@ export const useVoiceSystem = (): UseVoiceSystemReturn => {
   const recognitionRef = useRef<any>(null);
   const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   
-  // Check browser support
+  // Check browser support and HTTPS requirements
   const isSpeechSupported = typeof window !== 'undefined' && 
-    ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window);
+    ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) &&
+    (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
     
   const isTtsSupported = typeof window !== 'undefined' && 
     'speechSynthesis' in window;
@@ -42,7 +43,11 @@ export const useVoiceSystem = (): UseVoiceSystemReturn => {
   // Speech Recognition (Voice to Text)
   const startListening = useCallback(() => {
     if (!isSpeechSupported) {
-      setError('Speech recognition not supported in this browser');
+      if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        setError('Speech recognition requires HTTPS. Please use a secure connection.');
+      } else {
+        setError('Speech recognition not supported in this browser');
+      }
       return;
     }
 
@@ -81,7 +86,27 @@ export const useVoiceSystem = (): UseVoiceSystemReturn => {
 
       recognition.onerror = (event: any) => {
         console.error('Speech recognition error:', event.error);
-        setError(`Speech recognition error: ${event.error}`);
+        
+        // Handle specific error types
+        let errorMessage = '';
+        switch (event.error) {
+          case 'not-allowed':
+            errorMessage = 'Microphone access denied. Please allow microphone permissions and try again.';
+            break;
+          case 'no-speech':
+            errorMessage = 'No speech detected. Please try speaking again.';
+            break;
+          case 'audio-capture':
+            errorMessage = 'No microphone found. Please check your microphone connection.';
+            break;
+          case 'network':
+            errorMessage = 'Network error. Please check your internet connection.';
+            break;
+          default:
+            errorMessage = `Speech recognition error: ${event.error}`;
+        }
+        
+        setError(errorMessage);
         setIsListening(false);
       };
 
@@ -93,7 +118,7 @@ export const useVoiceSystem = (): UseVoiceSystemReturn => {
       recognition.start();
     } catch (err) {
       console.error('Error starting speech recognition:', err);
-      setError('Failed to start speech recognition');
+      setError('Failed to start speech recognition. Please check your browser permissions.');
       setIsListening(false);
     }
   }, [isSpeechSupported]);

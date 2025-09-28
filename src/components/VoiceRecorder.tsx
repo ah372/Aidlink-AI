@@ -38,9 +38,17 @@ export const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
 
   const [isProcessing, setIsProcessing] = React.useState(false);
 
-  const handleStartListening = () => {
+  const handleStartListening = async () => {
     if (!disabled) {
-      startListening();
+      // Try to request microphone permission first
+      try {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        startListening();
+      } catch (permissionError) {
+        console.error('Microphone permission error:', permissionError);
+        // Still try to start listening - the error will be handled by the voice system
+        startListening();
+      }
     }
   };
 
@@ -71,7 +79,13 @@ export const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
     return (
       <div className={cn("text-center p-4 text-muted-foreground", className)}>
         <MicOff className="w-8 h-8 mx-auto mb-2" />
-        <p className="text-sm">Voice recognition not supported in this browser</p>
+        <p className="text-sm mb-2">Voice recognition not available</p>
+        <p className="text-xs text-gray-500">
+          {window.location.protocol !== 'https:' 
+            ? 'Voice features require HTTPS. Please use a secure connection.'
+            : 'Voice recognition not supported in this browser'
+          }
+        </p>
       </div>
     );
   }
@@ -80,9 +94,19 @@ export const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
     <div className={cn("w-full", className)}>
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-          <div className="text-red-700 text-sm font-medium">
+          <div className="text-red-700 text-sm font-medium mb-2">
             Voice Error: {error}
           </div>
+          {error.includes('Microphone access denied') && (
+            <div className="text-red-600 text-xs">
+              💡 <strong>Solution:</strong> Click the microphone icon in your browser's address bar and allow microphone access, then refresh the page.
+            </div>
+          )}
+          {error.includes('HTTPS') && (
+            <div className="text-red-600 text-xs">
+              💡 <strong>Solution:</strong> Voice features require a secure connection. Make sure you're using HTTPS.
+            </div>
+          )}
         </div>
       )}
 
