@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, User, Bot, Mic, Play, Pause } from 'lucide-react';
+import { Send, User, Bot, Mic, Play, Pause, Volume2, VolumeX } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VoiceRecorder } from './VoiceRecorder';
+import { useVoiceSystem } from '@/hooks/useVoiceSystem';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -78,10 +79,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [showVoiceRecorder, setShowVoiceRecorder] = useState(false);
   const [playingAudioId, setPlayingAudioId] = useState<string | null>(null);
   const [audioErrors, setAudioErrors] = useState<{ [key: string]: boolean }>({});
+  const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
   const config = themeConfig[theme];
+
+  // Voice system for text-to-speech
+  const { speak, stopSpeaking, isSpeaking, isTtsSupported } = useVoiceSystem();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -162,6 +167,19 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   };
 
+  const handleSpeakText = (messageId: string, text: string) => {
+    if (speakingMessageId === messageId) {
+      // Currently speaking this message, stop it
+      stopSpeaking();
+      setSpeakingMessageId(null);
+    } else {
+      // Stop any current speech and speak this text
+      stopSpeaking();
+      speak(text);
+      setSpeakingMessageId(messageId);
+    }
+  };
+
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
@@ -207,6 +225,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         {messages.map((message, index) => {
           const messageId = `message-${index}`;
           const isPlaying = playingAudioId === messageId;
+          const isSpeaking = speakingMessageId === messageId;
           const hasAudioError = audioErrors[messageId];
           
           return (
@@ -241,34 +260,63 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                         {formatTime(message.timestamp)}
                       </p>
                     )}
-                    {message.audioUrl && message.role === 'assistant' && (
-                      <div className="mt-3 flex items-center gap-2">
-                        {hasAudioError ? (
-                          <div className="flex items-center gap-2 text-red-500">
-                            <div className="text-xs">⚠️ Audio unavailable</div>
-                          </div>
-                        ) : (
+                    
+                    {/* Voice Controls for Assistant Messages */}
+                    {message.role === 'assistant' && (
+                      <div className="mt-3 flex items-center gap-2 flex-wrap">
+                        {/* Text-to-Speech Button */}
+                        {isTtsSupported && (
+                          <Button
+                            onClick={() => handleSpeakText(messageId, message.content)}
+                            variant="outline"
+                            size="sm"
+                            className="flex items-center gap-2 bg-white border-2 border-green-200 hover:bg-green-50 hover:border-green-400 shadow-sm transition-all duration-200"
+                          >
+                            {isSpeaking ? (
+                              <VolumeX className="w-4 h-4 text-green-600" />
+                            ) : (
+                              <Volume2 className="w-4 h-4 text-green-600" />
+                            )}
+                            <span className="text-sm font-medium text-green-700">
+                              {isSpeaking ? 'Stop' : 'Speak'}
+                            </span>
+                          </Button>
+                        )}
+                        
+                        {/* Audio Response Button */}
+                        {message.audioUrl && (
                           <>
-                            <Button
-                              onClick={() => handleAudioPlay(messageId, message.audioUrl!)}
-                              variant="outline"
-                              size="sm"
-                              className="flex items-center gap-2 bg-white border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 shadow-sm transition-all duration-200"
-                            >
-                              {isPlaying ? (
-                                <Pause className="w-4 h-4 text-blue-600" />
-                              ) : (
-                                <Play className="w-4 h-4 text-blue-600" />
-                              )}
-                              <span className="text-sm font-medium text-blue-700">
-                                {isPlaying ? 'Pause' : 'Listen'}
-                              </span>
-                            </Button>
-                            <div className="text-xs text-gray-500">
-                              🔊 Audio response available
-                            </div>
+                            {hasAudioError ? (
+                              <div className="flex items-center gap-2 text-red-500">
+                                <div className="text-xs">⚠️ Audio unavailable</div>
+                              </div>
+                            ) : (
+                              <Button
+                                onClick={() => handleAudioPlay(messageId, message.audioUrl!)}
+                                variant="outline"
+                                size="sm"
+                                className="flex items-center gap-2 bg-white border-2 border-blue-200 hover:bg-blue-50 hover:border-blue-400 shadow-sm transition-all duration-200"
+                              >
+                                {isPlaying ? (
+                                  <Pause className="w-4 h-4 text-blue-600" />
+                                ) : (
+                                  <Play className="w-4 h-4 text-blue-600" />
+                                )}
+                                <span className="text-sm font-medium text-blue-700">
+                                  {isPlaying ? 'Pause' : 'Listen'}
+                                </span>
+                              </Button>
+                            )}
                           </>
                         )}
+                        
+                        {/* Status Indicators */}
+                        <div className="text-xs text-gray-500">
+                          {isSpeaking && "🔊 Speaking..."}
+                          {isPlaying && "🎵 Playing audio..."}
+                          {!isSpeaking && !isPlaying && message.audioUrl && "🔊 Audio available"}
+                          {!isSpeaking && !isPlaying && !message.audioUrl && isTtsSupported && "💬 Text available"}
+                        </div>
                       </div>
                     )}
                   </div>

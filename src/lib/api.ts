@@ -23,15 +23,14 @@ export const generateUserId = () => {
 
 // Triage Agent API
 export const triageChat = async (userId: string, message: string): Promise<ChatResponse> => {
+  const formData = new FormData();
+  formData.append('user_id', userId);
+  formData.append('message', message);
+  formData.append('input_type', 'text');
+
   const response = await fetch(`${BASE_URL}/api/triage/chat`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      user_id: userId,
-      message: message,
-    }),
+    body: formData,
   });
 
   if (!response.ok) {
@@ -55,15 +54,14 @@ export const getTriageChatHistory = async (userId: string): Promise<ChatHistoryR
 
 // Medical Agent API
 export const medicalChat = async (userId: string, message: string): Promise<ChatResponse> => {
+  const formData = new FormData();
+  formData.append('user_id', userId);
+  formData.append('message', message);
+  formData.append('input_type', 'text');
+
   const response = await fetch(`${BASE_URL}/api/medical-emergency/chat`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      user_id: userId,
-      message: message,
-    }),
+    body: formData,
   });
 
   if (!response.ok) {
@@ -87,15 +85,14 @@ export const getMedicalChatHistory = async (userId: string): Promise<ChatHistory
 
 // Police Agent API
 export const policeChat = async (userId: string, message: string): Promise<ChatResponse> => {
+  const formData = new FormData();
+  formData.append('user_id', userId);
+  formData.append('message', message);
+  formData.append('input_type', 'text');
+
   const response = await fetch(`${BASE_URL}/api/police-emergency/chat`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      user_id: userId,
-      message: message,
-    }),
+    body: formData,
   });
 
   if (!response.ok) {
@@ -119,15 +116,14 @@ export const getPoliceChatHistory = async (userId: string): Promise<ChatHistoryR
 
 // Electricity Agent API
 export const electricityChat = async (userId: string, message: string): Promise<ChatResponse> => {
+  const formData = new FormData();
+  formData.append('user_id', userId);
+  formData.append('message', message);
+  formData.append('input_type', 'text');
+
   const response = await fetch(`${BASE_URL}/api/electricity-emergency/chat`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      user_id: userId,
-      message: message,
-    }),
+    body: formData,
   });
 
   if (!response.ok) {
@@ -151,15 +147,14 @@ export const getElectricityChatHistory = async (userId: string): Promise<ChatHis
 
 // Fire Agent API
 export const fireChat = async (userId: string, message: string): Promise<ChatResponse> => {
+  const formData = new FormData();
+  formData.append('user_id', userId);
+  formData.append('message', message);
+  formData.append('input_type', 'text');
+
   const response = await fetch(`${BASE_URL}/api/fire-emergency/chat`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      user_id: userId,
-      message: message,
-    }),
+    body: formData,
   });
 
   if (!response.ok) {
